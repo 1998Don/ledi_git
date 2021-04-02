@@ -4,16 +4,32 @@ import re
 import html
 from bs4 import BeautifulSoup
 #将直播中弹幕与车型的字典存入txt中
-# def dict_write_txt(dict_):
-#     with open('宝马.txt','a+') as f:
-#         f.seek(0)
-#         if f.read():
-#             f.write("----------以下为追加内容----------\n")
-#         else:
-#             f.seek(2)
-#         for key in dict_:
-#             value = ','.join(dict_.get(key))
-#             f.write(key+' : '+value+'\n')
+# # def dict_write_txt(dict_):
+# #     with open('宝马.txt','a+') as f:
+# #         f.seek(0)
+# #         if f.read():
+# #             f.write("----------以下为追加内容----------\n")
+# #         else:
+# #             f.seek(2)
+# #         for key in dict_:
+# #             value = ','.join(dict_.get(key))
+# #             f.write(key+' : '+value+'\n')
+#将txt中弹幕与车型的字典读取出来
+# def dict_read_txt():
+#     car_dict = []
+#     with open('/Users/dingcong/ledi_git/file_danmu/原匹配弹幕-车型.txt','r') as f:
+#         dict_list = f.readlines()
+#     if '-' in dict_list[0]:
+#         dict_list.pop(0)  #去掉注释
+#     for item in dict_list:
+#         item = item.replace(' ','').replace('\n','')
+#         car_dict.append(item.split(':'))
+#     car_dict = dict(car_dict)
+#     print(json.dumps(car_dict,ensure_ascii=False,indent=1))   #格式化输出--json
+
+
+
+
 class crawler_car:
     def web_bmw(self):
         url = 'https://www.bmw.com.cn/content/dam/bmw/marketCN/bmw_com_cn/model-finder/index.html'
