@@ -3,6 +3,7 @@ import requests
 import re
 import html
 from bs4 import BeautifulSoup
+from lxml import etree
 #将直播中弹幕与车型的字典存入txt中
 # # def dict_write_txt(dict_):
 # #     with open('宝马.txt','a+') as f:
@@ -26,10 +27,6 @@ from bs4 import BeautifulSoup
 #         car_dict.append(item.split(':'))
 #     car_dict = dict(car_dict)
 #     print(json.dumps(car_dict,ensure_ascii=False,indent=1))   #格式化输出--json
-
-
-
-
 class crawler_car:
     def web_bmw(self):
         url = 'https://www.bmw.com.cn/content/dam/bmw/marketCN/bmw_com_cn/model-finder/index.html'
@@ -149,33 +146,368 @@ class crawler_car:
             for item in result:
                 f.write(item + '\n')
         print(f"奥迪车型更新成功！共更新{len(result)}种车型")
+    #法拉利
+    def web_ferrari(self):
+        url = 'https://www.ferrari.com/zh-CN/auto/car-range'
+        r = requests.get(url).content.decode()
+        tree = etree.HTML(r)
+        content = tree.xpath('//span[@class="BtnAction__text__2vvCUxFa"]/text()')
+        result = set(filter(lambda x : x != '打造您的专属座驾' and x != '咨询详情' and x !='订阅法拉利电子通讯',content))
+        result = [i.replace('探索法拉利','').replace('探索','').replace('DISCOVER THE FERRARI','').strip() for i in result]
+        with open('./车型/法拉利车型.txt', 'w') as f:
+            # f.write(f"\n-----本次奥迪更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"法拉利车型更新成功！共更新{len(result)}种车型")
+    #长安
+    def web_changan(self):
+        url = 'https://www.changan.com.cn/'
+        '''
+            a = $x('//h6[@dd]/text()');
+            var arr = [];
+            for(var i =0;i<a.length;i++){
+                arr.push(a[i].data);
+            };
+            copy(arr)
+        '''
+    #吉利
+    def web_jili(self):
+        url = 'https://www.geely.com/'
+        header = {
+            'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url,headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('//p[@style="cursor:text"]/text()'))
+        with open('./车型/吉利车型.txt', 'w') as f:
+            # f.write(f"\n-----本次吉利更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"吉利车型更新成功！共更新{len(result)}种车型")
+    #长城
+    def web_changcheng(self):
+        url = 'https://www.gwm.com.cn/'
+        header = {
+            'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url,headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('//a//@data-title'))
+        result = set(filter(lambda x : len(x) < 12,result)) #通过车型长度筛掉无用信息
+        with open('./车型/长城车型.txt', 'w') as f:
+            # f.write(f"\n-----本次长城更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"长城车型更新成功！共更新{len(result)}种车型")
+    #比亚迪
+    def web_byd(self):
+        url = 'http://www.bydauto.com.cn/sites/REST/resources/v1/search/sites/BYD_AUTO/types/BydModelView/assets?fields=name,id,createdby,updatedby,ImmediateParents,isShowHeader,wetherListed,title,carSort,title1,descBefore,desc,desc1,desc2Before,desc2,desc3,desc4,image,testDrive,image1,powerType,tiBefore,tiPrice,tiAfter&field:subtype:equals=MotorDetails&orderBy=carSort:desc'
+        header = {
+            'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        car_class = json.loads(requests.get(url,headers=header).content.decode())['items']
+        result = []
+        for car in car_class:
+            result.append(car['title'])
+        result = set(result)
+        with open('./车型/比亚迪车型.txt', 'w') as f:
+            # f.write(f"\n-----本次比亚迪更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"比亚迪车型更新成功！共更新{len(result)}种车型")
+    #上汽通用
+    def web_sqty(self):
+        url_cadillac = 'https://www.cadillac.com.cn/'
+        url_xfl = 'https://www.chevrolet.com.cn/'
+        url_bk = 'https://www.buick.com.cn/'
+        header = {
+            'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r1 = requests.get(url_cadillac,headers=header).content.decode() #凯迪拉克
+        tree1 = etree.HTML(r1)
+        result = set(tree1.xpath('//div[@class="headLayout"]//p/text()'))
+        r2 = requests.get(url_xfl, headers=header).content.decode() #雪弗兰
+        tree2 = etree.HTML(r2)
+        result |= set(tree2.xpath('//div[@class="all"]//p/span[1]/text()'))
+        r3 = requests.get(url_bk, headers=header).content.decode()  #别克
+        tree3 = etree.HTML(r3)
+        result |= set(tree3.xpath('//ul[@class="pt-dual"]//a/text()'))
+        with open('./车型/上汽通用车型.txt', 'w') as f:
+            # f.write(f"\n-----本次上汽通用更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"上汽通用车型更新成功！共更新{len(result)}种车型")
+
+    #一汽丰田
+    def web_yqft(self):
+        url = 'https://www.ftms.com.cn/website/Car/brandModels'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        car_class = json.loads(requests.get(url, headers=header).content.decode())['data']
+        result = []
+        for car in car_class:
+            if car['car_series'] != []:
+                for item in car['car_series']:
+                        result.append(item['name'])
+        result = set(result)
+        with open('./车型/一汽丰田车型.txt', 'w') as f:
+            # f.write(f"\n-----本次一汽丰田更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"一汽丰田车型更新成功！共更新{len(result)}种车型")
+
+    # 奇瑞
+    def web_qr(self):
+        url = 'https://www.chery.cn/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('//ul[@class="clearfix"]/li[position()<3]/p[position()>1]/a/text()'))
+        with open('./车型/奇瑞车型.txt', 'w') as f:
+            # f.write(f"\n-----本次奇瑞更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"奇瑞车型更新成功！共更新{len(result)}种车型")
+
+    # 广汽丰田
+    def web_gqft(self):
+        url = 'https://www.gac-toyota.com.cn/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('//ul[@class="clearfix car-ul font16"]/li/a/text()'))
+        with open('./车型/广汽丰田车型.txt', 'w') as f:
+            # f.write(f"\n-----本次广汽丰田更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"广汽丰田车型更新成功！共更新{len(result)}种车型")
+
+    # 广汽本田
+    def web_gqbt(self):
+        url = 'https://www.ghac.cn/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('//div[@class="left"]/dl[1]/dd/a[@data-action="click"]/text()'))
+        with open('./车型/广汽本田车型.txt', 'w') as f:
+            # f.write(f"\n-----本次广汽丰田更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"广汽本田车型更新成功！共更新{len(result)}种车型")
+
+    # 广汽本田
+    def web_gqbt(self):
+        url = 'https://www.ghac.cn/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('//div[@class="left"]/dl[1]/dd/a[@data-action="click"]/text()'))
+        with open('./车型/广汽本田车型.txt', 'w') as f:
+            # f.write(f"\n-----本次广汽丰田更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"广汽本田车型更新成功！共更新{len(result)}种车型")
+
+    # 北京现代
+    def web_bjxd(self):
+        url = 'https://www.beijing-hyundai.com.cn/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('(//div[@class="swiper-wrapper"])[10]//a/p/text()'))
+        with open('./车型/北京现代车型.txt', 'w') as f:
+            # f.write(f"\n-----本次北京现代更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"北京现代车型更新成功！共更新{len(result)}种车型")
+
+    # 特斯拉
+    def web_bjxd(self):
+        url = 'https://www.tesla.cn/api/tesla/header/html/v0'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('(//ol[@data-region="legacy_menu_support"])[1]/li[position()<6]/a/text()'))
+        with open('./车型/特斯拉车型.txt', 'w') as f:
+            # f.write(f"\n-----本次特斯拉更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"特斯拉车型更新成功！共更新{len(result)}种车型")
+
+    # 蔚来
+    def web_weilai(self):
+        url = 'https://ir.nio.com/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('(//ul[@class="menu clearfix menu--level-1"])[1]/li/a/text()'))
+        with open('./车型/蔚来车型.txt', 'w') as f:
+            # f.write(f"\n-----本次蔚来更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"蔚来车型更新成功！共更新{len(result)}种车型")
+
+    # 小鹏
+    def web_xiaop(self):
+        url = 'https://www.xiaopeng.com/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('(//ul[@class="list"])[1]/li[1]/div/ul/li/a/text()'))
+        with open('./车型/小鹏车型.txt', 'w') as f:
+            # f.write(f"\n-----本次小鹏更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"小鹏车型更新成功！共更新{len(result)}种车型")
+
+    # 理想
+    def web_lx(self):
+        url = 'https://www.lixiang.com/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('//ul[@class="chj-header-link-panel"]/li[1]/a/text()'))
+        with open('./车型/理想车型.txt', 'w') as f:
+            # f.write(f"\n-----本次理想更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"理想车型更新成功！共更新{len(result)}种车型")
+    # 捷豹
+    def web_jb(self):
+        url = 'https://www.jaguar.com.cn/jaguar-range/index.html'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath('//div[@class="FooterNav__footerWrapper fontSmooth "]/div[@class="FooterNav__navWrapper el"][1]/ul/li[position()<8]/a/text()'))
+        with open('./车型/捷豹车型.txt', 'w') as f:
+            # f.write(f"\n-----本次捷豹更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"捷豹车型更新成功！共更新{len(result)}种车型")
+    # 凯迪拉克
+    def web_cadillac(self):
+        url_cadillac = 'https://www.cadillac.com.cn/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r= requests.get(url_cadillac,headers=header).content.decode() #凯迪拉克
+        tree = etree.HTML(r)
+        result = set(tree.xpath('//div[@class="headLayout"]//p/text()'))
+        with open('./车型/凯迪拉克车型.txt', 'w') as f:
+            # f.write(f"\n-----本次凯迪拉克更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"凯迪拉克车型更新成功！共更新{len(result)}种车型")
+
+    # 英菲尼迪
+    def web_infiniti(self):
+        url = 'https://www.infiniti.com.cn/vehicles/shop-infiniti-now.html'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath(
+            '//ul[@class="list-item"]/li/div/div/div/h3/a/text()'))
+        with open('./车型/英菲尼迪车型.txt', 'w') as f:
+            # f.write(f"\n-----本次英菲尼迪更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"英菲尼迪车型更新成功！共更新{len(result)}种车型")
+    # 林肯
+    def web_infiniti(self):
+        url = 'https://www.lincoln.com.cn/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath(
+            '(//div[@class="col-sm-3 footer-list"])[1]/div[@class="content-accordion"]/p/a/text()'))
+        with open('./车型/林肯车型.txt', 'w') as f:
+            # f.write(f"\n-----本次林肯更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"林肯车型更新成功！共更新{len(result)}种车型")
+    # 玛莎拉蒂
+    def web_infiniti(self):
+        url = 'https://www.maserati.com/cn/zh'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath(
+            '(//ul[@class="footer-element footer-element-column footer-line-links"])[1]/li/a/text()'))
+        with open('./车型/玛莎拉蒂车型.txt', 'w') as f:
+            # f.write(f"\n-----本次玛莎拉蒂更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"玛莎拉蒂车型更新成功！共更新{len(result)}种车型")
+    # 迈凯伦
+    def web_mclarencars(self):
+        url = 'https://www.mclarencars.cn/'
+        header = {
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+        }
+        r = requests.get(url, headers=header).content.decode()
+        tree = etree.HTML(r)
+        result = set(tree.xpath(
+            '//div[@class="model-category-wrapper"]/div/div/div/div/div/span/text()'))
+        with open('./车型/迈凯伦车型.txt', 'w') as f:
+            # f.write(f"\n-----本次迈凯伦更新车型共{len(result)}种-----\n\n")
+            for item in result:
+                f.write(item + '\n')
+        print(f"迈凯伦车型更新成功！共更新{len(result)}种车型")
 if __name__ == '__main__':
-    print('''
-----本系统用于更新以下品牌车型数据，更新后的文件存于本文件同级的车型文件夹中----
-请输入指定指令更新指定品牌数据：
-1、奥迪 2、宝马 3、奔驰 4、沃尔沃 5、雷克萨斯 6、保时捷 7、东风本田 8、上汽大众 9、一汽大众
-0、退出
-    ''')
+#     print('''
+# ----本系统用于更新以下品牌车型数据，更新后的文件存于本文件同级的车型文件夹中----
+# 请输入指定指令更新指定品牌数据：
+# 1、奥迪 2、宝马 3、奔驰 4、沃尔沃 5、雷克萨斯 6、保时捷 7、东风本田 8、上汽大众 9、一汽大众
+# 0、退出
+#     ''')
     car = crawler_car()
-    while True:
-        flag = eval(input("请输入需要更新的车型指令："))
-        if flag == 1:
-            car.web_aodi()
-        elif flag == 2:
-            car.web_bmw()
-        elif flag == 3:
-            car.web_benchi()
-        elif flag == 4:
-            car.web_volvo()
-        elif flag == 5:
-            car.web_lkss()
-        elif flag == 6:
-            car.web_baoshijie()
-        elif flag == 7:
-            car.web_dongfeng()
-        elif flag == 8:
-            car.web_shangqidazhong()
-        elif flag == 9:
-            car.web_yiqidazhong()
-        elif flag == 0:
-            break
+    car.web_mclarencars()
+    # while True:
+    #     flag = eval(input("请输入需要更新的车型指令："))
+    #     if flag == 1:
+    #         car.web_aodi()
+    #     elif flag == 2:
+    #         car.web_bmw()
+    #     elif flag == 3:
+    #         car.web_benchi()
+    #     elif flag == 4:
+    #         car.web_volvo()
+    #     elif flag == 5:
+    #         car.web_lkss()
+    #     elif flag == 6:
+    #         car.web_baoshijie()
+    #     elif flag == 7:
+    #         car.web_dongfeng()
+    #     elif flag == 8:
+    #         car.web_shangqidazhong()
+    #     elif flag == 9:
+    #         car.web_yiqidazhong()
+    #     elif flag == 0:
+    #         break

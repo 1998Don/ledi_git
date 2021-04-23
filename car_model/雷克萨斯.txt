@@ -1,0 +1,12 @@
+LC : LC
+LS : LS
+UX300E : UX300e
+CT : CT
+RX : RX
+LM : LM
+GS : GS
+LX : LX
+UX : UX
+NX : NX
+ES : ES
+RC : RC

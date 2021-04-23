@@ -97,14 +97,13 @@ if __name__ == '__main__':
     # print("已识别车型数据更新完成！")
     brand = input("请输入要获取的车型：")
     comment_list = get_bad_comment(brand)
-    with open('./file_danmu/未识别弹幕-奔驰.txt', 'w') as f:
+    with open(f'./file_danmu/未识别弹幕-{brand}.txt', 'w') as f:
         f.write(f'-----更新时间：{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}, 品牌{brand}, 未识别弹幕共{len(comment_list)}条-----\n')
         for comment in comment_list:
             f.write(comment + '\n')
     print("未识别弹幕数据更新完成！")
-    brand = input("请输入要获取的车型：")
     model_dict = get_car_dict(brand)
-    with open('./file_danmu/原匹配弹幕-车型-奔驰.txt', 'w') as f:
+    with open(f'./file_danmu/原匹配弹幕-车型-{brand}.txt', 'w') as f:
         f.write(f'-----更新时间：{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}, 品牌{brand}, 原匹配弹幕-车型共{len(model_dict)}条-----\n')
         for key in model_dict:
             f.write(key+' : '+model_dict.get(key)+'\n')
