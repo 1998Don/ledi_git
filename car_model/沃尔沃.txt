@@ -1,0 +1,7 @@
+S60 : S60
+XC60 : XC60
+XC40 : XC40
+XC90 : XC90
+S90 : S90
+V60 : V60
+V90CrossCountry : V90 Cross Country

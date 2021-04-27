@@ -18,21 +18,21 @@ class AodiImg:
         tree = etree.HTML(r)
         later_url = set(tree.xpath('//div[@class="uibox-con carpic-list02"]/ul/li/a/@href'))
         print(later_url)
-        # for i in later_url:
-        #     url = url_ + i
-        #     r = requests.get(url, headers=self.headers).text
-        #     tree = etree.HTML(r)
-        #     imgs_url = set(tree.xpath('(//div[@class="uibox-con carpic-list03"])[2]/ul/li/a/img/@src'))
-        #     if imgs_url is not ():
-        #         for item in imgs_url:
-        #             if item[:2] == '//':
-        #                 img = requests.get('https:'+item, headers=self.headers)
-        #                 with open(f'/Volumes/Don_disk/奥迪车型图片/{self.count}.png', 'wb+') as f:
-        #                     self.count += 1
-        #                     f.write(img.content)
-        #         if self.count % 100 == 0:
-        #             print(f"已爬取{self.count}张车型图片")
-        # print("爬取结束")
+        for i in later_url:
+            url = url_ + i
+            r = requests.get(url, headers=self.headers).text
+            tree = etree.HTML(r)
+            imgs_url = set(tree.xpath('(//div[@class="uibox"])[1]/div[@class="uibox-con carpic-list03"]/ul/li/a/img/@src'))
+            if imgs_url is not ():
+                for item in imgs_url:
+                    if item[:2] == '//':
+                        img = requests.get('https:'+item, headers=self.headers)
+                        with open(f'/Volumes/Don_disk/奥迪车型图片/{self.count}.png', 'wb+') as f:
+                            self.count += 1
+                            f.write(img.content)
+                if self.count % 100 == 0:
+                    print(f"已爬取{self.count}张车型图片")
+        print("爬取结束")
 
 if __name__ == '__main__':
     car = AodiImg()

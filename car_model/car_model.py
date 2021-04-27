@@ -27,8 +27,8 @@ class car_class:
         for i in range(len(car_class_key)):
             car_class_key[i][1] = car_class_key[i][1].strip().split(',')
         return dict(car_class_key)
-    def read_danmu(self):
-        with open('./file_danmu/test1.txt', 'r') as f:
+    def read_danmu(self,brand):
+        with open(f'./file_danmu/{brand}测试.txt', 'r') as f:
             danmu = f.readlines()
         danmu = [item.replace('\n','') for item in danmu]
         return danmu
@@ -66,10 +66,14 @@ if __name__ == '__main__':
         brand = '雷克萨斯'
     elif brand in ['保时捷','baoshijie','bsj']:
         brand = '保时捷'
+    elif brand in ['沃尔沃','woerwo','wew']:
+        brand = '沃尔沃'
+    elif brand in ['东风本田','dongfengbentian','dfbt']:
+        brand = '东风本田'
     model = car_class(brand)    #创建模型实例
     car_class = model.read_car_class()  #获取该品牌车型信息
     car_class_key= model.read_car_class_key()   #获取该品牌车型别名
-    danmu = model.read_danmu()
+    danmu = model.read_danmu(brand)
     model.danmu_recognition(car_class,car_class_key,danmu)
 
 
