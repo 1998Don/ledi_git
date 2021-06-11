@@ -481,33 +481,32 @@ class crawler_car:
                 f.write(item + '\n')
         print(f"迈凯伦车型更新成功！共更新{len(result)}种车型")
 if __name__ == '__main__':
-#     print('''
-# ----本系统用于更新以下品牌车型数据，更新后的文件存于本文件同级的车型文件夹中----
-# 请输入指定指令更新指定品牌数据：
-# 1、奥迪 2、宝马 3、奔驰 4、沃尔沃 5、雷克萨斯 6、保时捷 7、东风本田 8、上汽大众 9、一汽大众
-# 0、退出
-#     ''')
+    print('''
+----本系统用于更新以下品牌车型数据，更新后的文件存于本文件同级的车型文件夹中----
+请输入指定指令更新指定品牌数据：
+1、奥迪 2、宝马 3、奔驰 4、沃尔沃 5、雷克萨斯 6、保时捷 7、东风本田 8、上汽大众 9、一汽大众
+0、退出
+    ''')
     car = crawler_car()
-    car.web_mclarencars()
-    # while True:
-    #     flag = eval(input("请输入需要更新的车型指令："))
-    #     if flag == 1:
-    #         car.web_aodi()
-    #     elif flag == 2:
-    #         car.web_bmw()
-    #     elif flag == 3:
-    #         car.web_benchi()
-    #     elif flag == 4:
-    #         car.web_volvo()
-    #     elif flag == 5:
-    #         car.web_lkss()
-    #     elif flag == 6:
-    #         car.web_baoshijie()
-    #     elif flag == 7:
-    #         car.web_dongfeng()
-    #     elif flag == 8:
-    #         car.web_shangqidazhong()
-    #     elif flag == 9:
-    #         car.web_yiqidazhong()
-    #     elif flag == 0:
-    #         break
+    while True:
+        flag = eval(input("请输入需要更新的车型指令："))
+        if flag == 1:
+            car.web_aodi()
+        elif flag == 2:
+            car.web_bmw()
+        elif flag == 3:
+            car.web_benchi()
+        elif flag == 4:
+            car.web_volvo()
+        elif flag == 5:
+            car.web_lkss()
+        elif flag == 6:
+            car.web_baoshijie()
+        elif flag == 7:
+            car.web_dongfeng()
+        elif flag == 8:
+            car.web_shangqidazhong()
+        elif flag == 9:
+            car.web_yiqidazhong()
+        elif flag == 0:
+            break

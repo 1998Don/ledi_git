@@ -8,10 +8,10 @@
 8 : BMW8系四门轿跑车
 X1 : BMWX1插电式混合动力
 X2 : BMWX2
-X3 : BMWX3M
-X4 : BMWX4M
+X3 : BMWX3
+X4 : BMWX4
 X5 : BMWX5插电式混合动力
-X6 : BMWX6M
+X6 : BMWX6
 X7 : BMWX7
 M2 : BMWM2雷霆版
 M3 : BMWM3
